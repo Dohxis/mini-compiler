@@ -1,4 +1,6 @@
-class Program:
+from token import Token
+
+class Program(object):
 
     def __init__(self, source):
         self.pos = 0
@@ -17,12 +19,26 @@ class Program:
         return self.source[self.pos + far]
 
     def tokenize(self):
-        return None;
+
+        # Definitions
+        if self.char().isalpha():
+            definition = self.char()
+            while self.peek().isalpha():
+                definition = definition + self.peek()
+                self.incPos()
+            return Token("DEFINITION", definition)
+
+        if self.char().isspace():
+            return None
+
+        return Token("UNKOWN", self.char())
 
     def init(self):
         while self.pos < len(self.source):
-            self.tokens.append(self.tokenize())
-            print(self.tokenize())
+            token = self.tokenize()
+            if token != None:
+                self.tokens.append(token)
+                print(token)
             self.incPos()
 
 def compile(source_file):
