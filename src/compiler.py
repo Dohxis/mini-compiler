@@ -1,9 +1,11 @@
 from token import Token
+from node import *
 
 class Program(object):
 
     def __init__(self, source):
         self.pos = 0
+        self.posN = 0
         self.nodes = []
         self.tokens = []
         self.nodes = []
@@ -15,6 +17,9 @@ class Program(object):
 
     def incPos(self):
         self.pos = self.pos + 1
+
+    def incPosN(self):
+        self.posN = self.posN + 1
 
     def peek(self, far=1):
         return self.source[self.pos + far]
@@ -87,6 +92,31 @@ class Program(object):
 
         return Token("UNKOWN", self.char())
 
+    def peekNode(self, far=1):
+        return self.tokens[self.posN + far]
+
+    def node(self):
+        return self.tokens[self.posN]
+
+    def makeNode(self):
+
+        # AssignVar
+        if(self.node().type == "DEFINITION" and self.peekNode().type == "COLON"):
+            # name
+            name = self.node().value
+            # type
+            self.incPosN()
+            self.incPosN()
+            type = self.node().value
+            # value
+            self.incPosN()
+            self.incPosN()
+            value = ""
+            while self.node().type != "SEMICOLON":
+                value = value + self.node().value
+                self.incPosN()
+            return AssignVar(name, type, value)
+
     def init(self):
         while self.pos < len(self.source):
             token = self.tokenize()
@@ -96,6 +126,13 @@ class Program(object):
             self.incPos()
 
         print()
+
+        while self.posN < len(self.tokens):
+            node = self.makeNode()
+            if node != None:
+                self.nodes.append(node)
+                print(node)
+            self.incPosN()
 
 
 def compile(source_file):
