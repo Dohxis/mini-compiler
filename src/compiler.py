@@ -1,9 +1,11 @@
 from token import Token
 from node import *
+import os
 
 class Program(object):
 
-    def __init__(self, source):
+    def __init__(self, source, name):
+        self.name = name
         self.pos = 0
         self.posN = 0
         self.nodes = []
@@ -147,9 +149,36 @@ class Program(object):
             #value
             self.incPosN()
             value = self.eat_value()
-            
+
             return ModVar(name, value)
 
+
+    def compile_to_cpp(self):
+
+        INCLUDED = []
+
+        with open((self.name + ".cpp"), "w") as output:
+                # includes goes here
+                for _i, node in enumerate(self.nodes):
+                    inc = node.check_include()
+                    if inc is not False and inc not in INCLUDED:
+                        output.write("#include<"+ inc +">\n")
+
+
+                output.write("\nint main() {\n")
+
+                # code goes here expect of new functions and imports
+                # node.inside is a boolean which says if the node has
+                # to be compiled inside the main function
+                for _i, node in enumerate(self.nodes):
+                    if node.inside:
+                        output.write(node.gen_code())
+
+                output.write("\treturn 0;\n")
+                output.write("}\n")
+
+        os.system("cat " + self.name + ".cpp")
+        os.system("g++ " + self.name + ".cpp" + " -o " + self.name)
 
     def init(self):
         while self.pos < len(self.source):
@@ -168,7 +197,12 @@ class Program(object):
                 print(node)
             self.incPosN()
 
+        print()
+
+        self.compile_to_cpp()
+
 
 def compile(source_file):
+    name = os.path.splitext(source_file)[0]
     with open(source_file, 'r') as source_file:
-        return Program(source_file.read())
+        return Program(source_file.read(), name)
