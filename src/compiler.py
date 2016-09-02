@@ -34,14 +34,22 @@ class Program(object):
                 self.incPos()
             return Token("DEFINITION", definition)
 
+        # Integers
+        if self.char().isnumeric():
+            integer = self.char()
+            while self.peek().isnumeric():
+                integer = integer + self.peek()
+                self.incPos()
+            return Token("INTEGER", integer)
+
         # Strings
         if self.char() == '\"':
-            string = ""
+            string = "\""
             self.incPos()
             while self.char() != '\"':
                 string = string + self.char()
                 self.incPos()
-            return Token("STRING", string)
+            return Token("STRING", string + "\"")
 
         # Left paren
         if self.char() == '(':
@@ -98,24 +106,50 @@ class Program(object):
     def node(self):
         return self.tokens[self.posN]
 
+    def eat_type(self):
+        self.incPosN()
+        type = ""
+        while self.node().type != "EQUAL":
+            type = type + self.node().value
+            self.incPosN()
+        return type
+
+    def eat_value(self):
+        value = ""
+        while self.node().type != "SEMICOLON":
+            value = value + self.node().value
+            self.incPosN()
+        return value
+
+
     def makeNode(self):
 
         # AssignVar
-        if(self.node().type == "DEFINITION" and self.peekNode().type == "COLON"):
+        # TODO: This was a fast hack to check if we are dealing with variables or function arguments.
+        # We need a better way to check this kind of action
+        if(self.node().type == "DEFINITION" and self.peekNode().type == "COLON" and (self.peekNode(3).type == "EQUAL" or self.peekNode(5).type == "EQUAL")):
             # name
             name = self.node().value
+            self.incPosN()
             # type
-            self.incPosN()
-            self.incPosN()
-            type = self.node().value
+            type = self.eat_type()
             # value
             self.incPosN()
-            self.incPosN()
-            value = ""
-            while self.node().type != "SEMICOLON":
-                value = value + self.node().value
-                self.incPosN()
+            value = self.eat_value()
+
             return AssignVar(name, type, value)
+
+        # ModVar
+        if(self.node().type == "DEFINITION" and self.peekNode().type == "EQUAL"):
+            #name
+            name = self.node().value
+            self.incPosN()
+            #value
+            self.incPosN()
+            value = self.eat_value()
+            
+            return ModVar(name, value)
+
 
     def init(self):
         while self.pos < len(self.source):
