@@ -3,7 +3,7 @@
 - [ ] Variable assignment [Parsing / Codegen];<br>
 ```
 variable :Int = 123;
-variable :Int[] = 123;
+variable :Int[] = [123, 123];
 ```
 - [ ] Function declaration [Parsing / Codegen];<br>
 ```
