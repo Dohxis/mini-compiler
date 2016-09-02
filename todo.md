@@ -1,6 +1,6 @@
 ## Todo
 
-- [ ] Variable assignment [Parsing / Codegen];<br>
+- [ ] Variable assignment [~~Parsing~~ / Codegen];<br>
 ```
 variable :Int = 123;
 variable :Int[] = [123, 123];
@@ -14,4 +14,8 @@ function bar() :Int {  }
 ```
 for(x in 0..10) {  }
 while(variable) {  }
+```
+- [ ] If/else clauses [Parsing / Codegen];<br>
+```
+if(variable) {  } else {  }
 ```
