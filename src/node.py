@@ -90,3 +90,38 @@ class ModVar(object):
             value = self.value
         )
         return self.codegen
+
+class FuncCall(object):
+
+    def __init__(self, lib, name, args):
+        self.node = "FuncCall"
+        self.lib = lib
+        self.name = name
+        self.args = args
+        self.inside = True
+        self.codegen = ""
+
+    def __str__(self):
+        return "FuncCall({lib}, {name}, {args})".format(
+            lib = self.lib,
+            name = self.name,
+            args = self.args
+        )
+
+    def __repr__(self):
+        return self.__str__()
+
+    def check_include(self):
+        if self.lib != "None" and self.lib.startswith("_"):
+            # Include header with .h extension
+            if self.lib.startswith("__"):
+                return self.lib[2:] + ".h"
+            return self.lib[1:]
+        return False
+
+    def gen_code(self):
+        self.codegen = "\t{name}({args});\n".format(
+            name = self.name,
+            args = self.args
+        )
+        return self.codegen

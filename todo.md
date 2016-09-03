@@ -5,6 +5,11 @@
 variable :Int = 123;
 variable :Int[] = [123, 123];
 ```
+- [x] Function call [~~Parsing~~ / ~~Codegen~~];<br>
+```
+func(arg1, arg2);
+__stdio::printf("%d\n", variable);
+```
 - [ ] Function declaration [Parsing / Codegen];<br>
 ```
 function foo(x:Int) {  }

@@ -29,9 +29,9 @@ class Program(object):
     def tokenize(self):
 
         # Definitions
-        if self.char().isalpha():
+        if self.char().isalpha() or self.char() in "_":
             definition = self.char()
-            while self.peek().isalpha():
+            while self.peek().isalpha() or self.char() in ["_", "-"]:
                 definition = definition + self.peek()
                 self.incPos()
             return Token("DEFINITION", definition)
@@ -103,6 +103,8 @@ class Program(object):
         return Token("UNKOWN", self.char())
 
     def peekNode(self, far=1):
+        if(self.posN + far > len(self.tokens) - 1):
+            return False
         return self.tokens[self.posN + far]
 
     def node(self):
@@ -122,6 +124,13 @@ class Program(object):
             value = value + self.node().value
             self.incPosN()
         return value
+
+    def eat_args(self):
+        args = ""
+        while self.peekNode().type not in ["SEMICOLON", "COLON", "LCURLY"]:
+            args = args + self.node().value
+            self.incPosN()
+        return args
 
 
     def makeNode(self):
@@ -158,6 +167,24 @@ class Program(object):
             value = self.eat_value()
 
             return ModVar(name, value)
+
+        # FuncCall
+        if (self.node().type == "DEFINITION" and self.peekNode().type == "LPAREN") or (self.node().type == "DEFINITION" and self.peekNode().type == "COLON" and self.peekNode(4).type == "LPAREN"):
+            #lib
+            lib = "None"
+            if self.node().type == "DEFINITION" and self.peekNode().type == "COLON" and self.peekNode(4).type == "LPAREN":
+                lib = self.node().value
+                self.incPosN()
+                self.incPosN()
+                self.incPosN()
+            #name
+            name = self.node().value
+            self.incPosN()
+            #arguments
+            self.incPosN()
+            args = self.eat_args()
+
+            return FuncCall(lib, name, args)
 
 
     def compile_to_cpp(self):
