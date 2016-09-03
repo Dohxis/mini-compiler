@@ -163,6 +163,7 @@ class Program(object):
                     inc = node.check_include()
                     if inc is not False and inc not in INCLUDED:
                         output.write("#include<"+ inc +">\n")
+                        INCLUDED.append(inc)
 
 
                 output.write("\nint main() {\n")
