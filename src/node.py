@@ -17,7 +17,17 @@ class AssignVar(object):
         self.type = type
         self.value = value
         self.inside = True
+        self.array = False
         self.codegen = ""
+
+        if self.type.endswith("[]"):
+            self.array = True
+            self.type = self.type[:-2]
+            self.value = list(self.value)
+            self.value[0] = "{"
+            self.value[len(self.value)-1] = "}"
+            new = "".join(self.value)
+            self.value = new
 
     def __str__(self):
         return "AssignVar({var}, {type}, {value})".format(
@@ -39,11 +49,18 @@ class AssignVar(object):
         # TODO: Add support for arrays.
         if self.type in PRIMTYPES:
             self.type = PRIMTYPES[self.type]
-        self.codegen = "\t{type} {name} = {value};\n".format(
-            type = self.type,
-            name = self.var,
-            value = self.value
-        )
+        if self.array:
+            self.codegen = "\tstd::vector<{type}> {name} = {value};\n".format(
+                type = self.type,
+                name = self.var,
+                value = self.value
+            )
+        else:
+            self.codegen = "\t{type} {name} = {value};\n".format(
+                type = self.type,
+                name = self.var,
+                value = self.value
+            )
         return self.codegen
 
 class ModVar(object):

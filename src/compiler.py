@@ -142,10 +142,17 @@ class Program(object):
             return AssignVar(name, type, value)
 
         # ModVar
-        if(self.node().type == "DEFINITION" and self.peekNode().type == "EQUAL"):
+        if(self.node().type == "DEFINITION" and (self.peekNode().type == "EQUAL" or self.peekNode(4).type == "EQUAL")):
             #name
             name = self.node().value
             self.incPosN()
+            #index
+            if self.node().type == "LBRACKET":
+                self.incPosN()
+                index = self.node().value
+                self.incPosN()
+                name = name + "[" + index + "]"
+                self.incPosN()
             #value
             self.incPosN()
             value = self.eat_value()
@@ -164,6 +171,9 @@ class Program(object):
                     if inc is not False and inc not in INCLUDED:
                         output.write("#include<"+ inc +">\n")
                         INCLUDED.append(inc)
+                    if node.node == "AssignVar" and "vector" not in INCLUDED and node.array:
+                         output.write("#include<vector>\n")
+                         INCLUDED.append("vector")
 
 
                 output.write("\nint main() {\n")
@@ -179,7 +189,7 @@ class Program(object):
                 output.write("}\n")
 
         os.system("cat " + self.name + ".cpp")
-        os.system("g++ " + self.name + ".cpp" + " -o " + self.name)
+        os.system("g++ -std=c++11 " + self.name + ".cpp" + " -o " + self.name)
 
     def init(self):
         while self.pos < len(self.source):
