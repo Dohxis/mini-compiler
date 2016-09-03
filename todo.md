@@ -1,6 +1,6 @@
 ## Todo
 
-- [ ] Variable assignment [~~Parsing~~ / Codegen];<br>
+- [x] Variable assignment [~~Parsing~~ / ~~Codegen~~];<br>
 ```
 variable :Int = 123;
 variable :Int[] = [123, 123];
