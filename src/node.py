@@ -22,16 +22,20 @@ def check_for_functions(string):
     i = 0
     while i < len(string) - 1:
         if string[i] == ":" and string[i+1] == ":":
-            string[i] = ""
-            string[i+1] = ""
-            i = i - 1
-            while string[i].isalpha() or string[i] in ["_", "-"]:
-                if string[i] == "_" and string[i+1] != "_" and string[i-1] != "_":
-                    string[i] = "std::"
-                else:
-                    string[i] = ""
-                i = i - 1
-        i = i + 1
+            x = i - 1
+            while string[x].isalpha() or string[x] in ["_", "-"]:
+                if string[x] == "_":
+                    if string[x-1] == "_":
+                        c = x - 1           # if "__" is found, deletes everything from the first "_"
+                    else:                   # otherwise, changes "_" to "std::" and deletes everything after that
+                        string[x] = "std::"
+                        c = x + 1
+                    while not(string[c] == ":" and string[c+1] != ":"):  # deletes until the last ":" is reached
+                        string[c] = ""
+                        c += 1
+                    string[c] = ""  # finally, the last ":" is deleted
+                x -= 1
+        i += 1
     return "".join(string)
 
 
