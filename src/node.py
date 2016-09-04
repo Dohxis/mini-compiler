@@ -9,6 +9,32 @@ INCTYPES = {
     "String": "string"
 }
 
+def is_include_needed(lib):
+    if lib != "None" and lib.startswith("_"):
+        # Include header with .h extension
+        if lib.startswith("__"):
+            return lib[2:] + ".h"
+        return lib[1:]
+    return False
+
+def check_for_functions(string):
+    string = list(string)
+    i = 0
+    while i < len(string) - 1:
+        if string[i] == ":" and string[i+1] == ":":
+            string[i] = ""
+            string[i+1] = ""
+            i = i - 1
+            while string[i].isalpha() or string[i] in ["_", "-"]:
+                if string[i] == "_" and string[i+1] != "_" and string[i-1] != "_":
+                    string[i] = "std::"
+                else:
+                    string[i] = ""
+                i = i - 1
+        i = i + 1
+    return "".join(string)
+
+
 class AssignVar(object):
 
     def __init__(self, var, type, value):
@@ -19,6 +45,7 @@ class AssignVar(object):
         self.inside = True
         self.array = False
         self.codegen = ""
+        #self.value = check_for_functions(self.value)
 
         if self.type.endswith("[]"):
             self.array = True
@@ -112,14 +139,12 @@ class FuncCall(object):
         return self.__str__()
 
     def check_include(self):
-        if self.lib != "None" and self.lib.startswith("_"):
-            # Include header with .h extension
-            if self.lib.startswith("__"):
-                return self.lib[2:] + ".h"
-            return self.lib[1:]
-        return False
+        return is_include_needed(self.lib)
 
     def gen_code(self):
+        inc = self.check_include()
+        if inc != False and not inc.endswith('.h'):
+            self.name = "std::" + self.name
         self.codegen = "\t{name}({args});\n".format(
             name = self.name,
             args = self.args

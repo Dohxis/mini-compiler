@@ -12,6 +12,7 @@ class Program(object):
         self.tokens = []
         self.nodes = []
         self.source = source
+        self.need_to_include = []
         self.init()
 
     def char(self):
@@ -186,6 +187,17 @@ class Program(object):
 
             return FuncCall(lib, name, args)
 
+        # UseKeyword
+        if self.node().value == "use":
+            self.incPosN()
+            lib = ""
+            while self.node().type != "SEMICOLON":
+                lib = lib + self.node().value
+                self.incPosN()
+            include = is_include_needed(lib)
+            if include is not None:
+                self.need_to_include.append(include)
+
 
     def compile_to_cpp(self):
 
@@ -193,6 +205,9 @@ class Program(object):
 
         with open((self.name + ".cpp"), "w") as output:
                 # includes goes here
+                for _i, inc in enumerate(self.need_to_include):
+                    if inc not in INCLUDED:
+                        output.write("#include<"+ inc +">\n")
                 for _i, node in enumerate(self.nodes):
                     inc = node.check_include()
                     if inc is not False and inc not in INCLUDED:
