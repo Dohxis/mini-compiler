@@ -29,6 +29,12 @@ class Program(object):
 
     def tokenize(self):
 
+        # Comments
+        if self.char() == "#":
+            while self.peek() != "\n":
+                self.incPos()
+            return None
+
         # Definitions
         if self.char().isalpha() or self.char() in "_":
             definition = self.char()
@@ -40,7 +46,7 @@ class Program(object):
         # Integers
         if self.char().isnumeric():
             integer = self.char()
-            while self.peek().isnumeric():
+            while self.peek().isnumeric() or self.peek() == ".":
                 integer = integer + self.peek()
                 self.incPos()
             return Token("INTEGER", integer)
@@ -97,6 +103,10 @@ class Program(object):
         # Binary operator
         if self.char() in ['+', '-', '/', '*']:
             return Token("BINARYOP", self.char())
+
+        # Dot
+        if self.char() == ".":
+            return Token("DOT", self.char())
 
         if self.char().isspace():
             return None

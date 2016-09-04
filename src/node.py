@@ -1,7 +1,8 @@
 # Primitive Types
 PRIMTYPES = {
     "Int": "int",
-    "String": "std::string"
+    "String": "std::string",
+    "Float": "double"
 }
 
 # Type includes
