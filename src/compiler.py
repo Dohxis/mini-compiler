@@ -4,15 +4,17 @@ import os
 
 class Program(object):
 
-    def __init__(self, source, name):
+    def __init__(self, source, name, args):
         self.name = name
         self.pos = 0
         self.posN = 0
         self.nodes = []
         self.tokens = []
         self.nodes = []
+        self.args = args
         self.source = source
         self.need_to_include = []
+        self.need_to_include_user = []
         self.init()
 
     def char(self):
@@ -146,6 +148,19 @@ class Program(object):
 
     def makeNode(self):
 
+        # UseKeyword
+        if self.node().value == "use":
+            self.incPosN()
+            lib = ""
+            while self.node().type != "SEMICOLON":
+                lib = lib + self.node().value
+                self.incPosN()
+            include = is_include_needed(lib)
+            if include is not False:
+                self.need_to_include.append(include)
+            elif include is False:
+                self.need_to_include_user.append(lib)
+
         # AssignVar
         # TODO: This was a fast hack to check if we are dealing with variables or function arguments.
         # We need a better way to check this kind of action
@@ -202,17 +217,6 @@ class Program(object):
             name = self.peekNode()
             self.incPosN()
 
-        # UseKeyword
-        if self.node().value == "use":
-            self.incPosN()
-            lib = ""
-            while self.node().type != "SEMICOLON":
-                lib = lib + self.node().value
-                self.incPosN()
-            include = is_include_needed(lib)
-            if include is not None:
-                self.need_to_include.append(include)
-
 
     def compile_to_cpp(self):
 
@@ -223,6 +227,9 @@ class Program(object):
                 for _i, inc in enumerate(self.need_to_include):
                     if inc not in INCLUDED:
                         output.write("#include<"+ inc +">\n")
+                for _i, inc in enumerate(self.need_to_include_user):
+                    if inc not in INCLUDED:
+                        output.write("#include \""+ inc +".h\"\n")
                 for _i, node in enumerate(self.nodes):
                     node.check_include()
                     if node.libs != []:
@@ -247,8 +254,12 @@ class Program(object):
                 output.write("\treturn 0;\n")
                 output.write("}\n")
 
+        newArgs = ""
+        for arg in self.args:
+            newArgs = newArgs + arg + " "
+
         os.system("cat " + self.name + ".cpp")
-        os.system("g++ -std=c++11 " + self.name + ".cpp" + " -o " + self.name)
+        os.system("g++ -std=c++11 " + self.name + ".cpp " + newArgs + " -o " + self.name)
 
     def init(self):
         while self.pos < len(self.source):
@@ -272,7 +283,7 @@ class Program(object):
         self.compile_to_cpp()
 
 
-def compile(source_file):
+def compile(source_file, args):
     name = os.path.splitext(source_file)[0]
     with open(source_file, 'r') as source_file:
-        return Program(source_file.read(), name)
+        return Program(source_file.read(), name, args)
