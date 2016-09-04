@@ -17,27 +17,48 @@ def is_include_needed(lib):
         return lib[1:]
     return False
 
+
 def check_for_functions(string):
     libs = []
     string = list(string)
     i = 0
     while i < len(string) - 1:
+        lib = []
         if string[i] == ":" and string[i+1] == ":":
             x = i - 1
             while string[x].isalpha() or string[x] in ["_", "-"]:
                 if string[x] == "_":
                     if string[x-1] == "_":
-                        c = x - 1           # if "__" is found, deletes everything from the first "_"
-                    else:                   # otherwise, changes "_" to "std::" and deletes everything after that
+                        c = x - 1       # if "__" is found, deletes everything from the first "_"
+                    else:               # otherwise, changes "_" to "std::" and deletes everything after that
                         string[x] = "std::"
                         c = x + 1
                     while not(string[c] == ":" and string[c+1] != ":"):  # deletes until the last ":" is reached
+                        if string[c] != ":":
+                            lib.append(string[c])  # Takes in chars of the soon to be deleted lib names
                         string[c] = ""
                         c += 1
                     string[c] = ""  # finally, the last ":" is deleted
                 x -= 1
+        if lib.__len__() != 0:
+            libs.append("".join(lib))  # joins the saved chars to create a string of the lib name
         i += 1
+    libs = convert_libs(libs)  # the saved libs are converted to cpp format
     return "".join(string), libs
+
+
+def convert_libs(libs):  # coverts library names to cpp format
+    newlibs = []
+    for lib in libs:
+        if lib[:1] == "_":
+            newlibs.append(lib[2:] + ".h")  # example: "__cmath" is converted to "cmath.h"
+        else:
+            newlibs.append(lib)  # example: "_cmath" is converted to "cmath"
+    '''
+    Side note: Due to the way check_for_functions() works, it fetches "cmath"
+    instead of "_cmath" in the first place
+    '''
+    return newlibs
 
 
 class AssignVar(object):
