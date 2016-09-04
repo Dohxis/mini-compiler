@@ -187,7 +187,8 @@ class FuncDefine(object):
     def __init__(self, name, args):
         self.node = "FuncCall"
         self.name = name
-        self.args = args
+        self.args = self.convert_args(args)
+        self.type = self.get_type(args)
         self.inside = False
         self.codegen = ""
 
@@ -200,10 +201,68 @@ class FuncDefine(object):
     def __repr__(self):
         return self.__str__()
 
+    def get_type(self, args):
+        if self.args[-1:] == ")":
+            return "void"
+        else:
+            listargs = list(args)
+            pos = listargs.__len__() - 1
+            typeT = []
+            while pos > 0:
+                typeT.append(listargs[pos])
+                pos -= 1
+                if listargs[pos] == ":":
+                    return "".join(list(reversed(typeT))).lower()
+
+    def convert_args(self, args):
+        listargs = list(args)
+        pos = listargs.__len__() - 1
+        while pos > 0:
+            listargs[pos] = ""
+            pos -= 1
+            if listargs[pos] == ")":
+                listargs[pos] = ""
+                pos = 0
+        pos = 1
+        temparg = []
+        args1 = []
+        while pos < listargs.__len__():
+            if listargs[pos] != " ":
+                if listargs[pos] != "(":
+                    if listargs[pos] != ",":
+                        args1.append(listargs[pos])
+                    else:
+                        temparg.append("".join(args1))
+                        args1 = []
+            pos += 1
+        temparg.append("".join(args1))
+        return temparg
+
+
     def gen_code(self):
-        pass
+        self.codegen = "\t{type} {name}(".format(
+            type=self.type,
+            name=self.name
+        )
+        pos = 0
+        while pos < self.args.__len__():
+            k = self.args[pos].split(':')
+            arr = [k[0]] + [l for l in k[1:]]
+            self.codegen += "{type} {name}".format(
+                type=arr[1],
+                name=arr[0]
+            )
+            pos += 1
+            if pos != self.args.__len__():
+                self.codegen += ", "
+            else:
+                self.codegen += "){\n"
+        return self.codegen
 
 class End(object):
     def __init__(self):
+        self.codegen = ""
+
+    def gen_code(self):
         self.codegen = "}"
 

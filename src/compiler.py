@@ -215,7 +215,7 @@ class Program(object):
             self.incPosN()
             #arguments
             self.incPosN()
-            args = self.eat_args()
+            args = self.eat_define_args()
 
             return FuncCall(lib, name, args)
 
@@ -256,6 +256,9 @@ class Program(object):
                          output.write("#include<vector>\n")
                          INCLUDED.append("vector")
 
+                for _i, node in enumerate(self.nodes):
+                    if not node.inside:
+                        output.write(node.gen_code())
 
                 output.write("\nint main() {\n")
 
