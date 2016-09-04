@@ -122,6 +122,7 @@ class ModVar(object):
         )
         return self.codegen
 
+
 class FuncCall(object):
 
     def __init__(self, lib, name, args):
@@ -158,3 +159,21 @@ class FuncCall(object):
             args = self.args
         )
         return self.codegen
+
+
+class FuncDefine(object):
+    def __init__(self, name, args):
+        self.node = "FuncCall"
+        self.name = name
+        self.args = args
+        self.inside = True
+        self.codegen = ""
+
+    def __str__(self):
+        pass
+
+    def __repr__(self):
+        pass
+
+    def gen_code(self):
+        pass

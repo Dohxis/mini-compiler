@@ -187,6 +187,11 @@ class Program(object):
 
             return FuncCall(lib, name, args)
 
+        #FuncDefine
+        if self.node().type == "DEFINITION" and self.node().value == "function":
+            name = self.peekNode()
+            self.incPosN()
+
         # UseKeyword
         if self.node().value == "use":
             self.incPosN()
