@@ -1,6 +1,7 @@
 src/__pycache__
 *.fr
 *.cpp
+*.h
 test
 .idea
 *.pyc

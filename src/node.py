@@ -1,7 +1,8 @@
 # Primitive Types
 PRIMTYPES = {
     "Int": "int",
-    "String": "std::string"
+    "String": "std::string",
+    "Float": "double"
 }
 
 # Type includes
@@ -199,11 +200,10 @@ class FuncDefine(object):
     def __repr__(self):
         return self.__str__()
 
-
-
     def gen_code(self):
         pass
 
 class End(object):
     def __init__(self):
         self.codegen = "}"
+
