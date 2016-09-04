@@ -187,14 +187,23 @@ class FuncDefine(object):
         self.node = "FuncCall"
         self.name = name
         self.args = args
-        self.inside = True
+        self.inside = False
         self.codegen = ""
 
     def __str__(self):
-        pass
+        return "FuncDefine({name}, {args})".format(
+            name = self.name,
+            args = self.args
+        )
 
     def __repr__(self):
-        pass
+        return self.__str__()
+
+
 
     def gen_code(self):
         pass
+
+class End(object):
+    def __init__(self):
+        self.codegen = "}"

@@ -133,6 +133,13 @@ class Program(object):
             self.incPosN()
         return args
 
+    def eat_define_args(self):
+        args = ""
+        while self.peekNode().type not in ["SEMICOLON", "LCURLY"]:
+            args = args + self.node().value
+            self.incPosN()
+        return args
+
 
     def makeNode(self):
 
@@ -187,10 +194,18 @@ class Program(object):
 
             return FuncCall(lib, name, args)
 
-        #FuncDefine
-        if self.node().type == "DEFINITION" and self.node().value == "function":
+        # FuncDefine   Example: function name(x:Int){}
+        if self.node().value == "function":
+            #name
             name = self.peekNode()
             self.incPosN()
+            #arguments
+            args = self.eat_args()
+            return FuncDefine(name, args)
+
+        #End()
+        if self.node().type == "RCURLY":
+            return End()
 
         # UseKeyword
         if self.node().value == "use":
