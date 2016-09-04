@@ -18,6 +18,7 @@ def is_include_needed(lib):
     return False
 
 def check_for_functions(string):
+    libs = []
     string = list(string)
     i = 0
     while i < len(string) - 1:
@@ -36,7 +37,7 @@ def check_for_functions(string):
                     string[c] = ""  # finally, the last ":" is deleted
                 x -= 1
         i += 1
-    return "".join(string)
+    return "".join(string), libs
 
 
 class AssignVar(object):
@@ -49,7 +50,7 @@ class AssignVar(object):
         self.inside = True
         self.array = False
         self.codegen = ""
-        #self.value = check_for_functions(self.value)
+        self.value, self.libs = check_for_functions(self.value)
 
         if self.type.endswith("[]"):
             self.array = True
@@ -72,9 +73,7 @@ class AssignVar(object):
 
     def check_include(self):
         if self.type in INCTYPES:
-            return INCTYPES[self.type]
-        else:
-            return False
+            self.libs.append(INCTYPES[self.type])
 
     def gen_code(self):
         # TODO: Add support for arrays.
@@ -102,6 +101,7 @@ class ModVar(object):
         self.value = value
         self.inside = True
         self.codegen = ""
+        self.value, self.libs = check_for_functions(self.value)
 
     def __str__(self):
         return "ModVar({var}, {value})".format(
@@ -129,6 +129,7 @@ class FuncCall(object):
         self.lib = lib
         self.name = name
         self.args = args
+        self.libs = []
         self.inside = True
         self.codegen = ""
 
@@ -143,7 +144,10 @@ class FuncCall(object):
         return self.__str__()
 
     def check_include(self):
-        return is_include_needed(self.lib)
+        inc = is_include_needed(self.lib)
+        if inc != False:
+            self.libs.append(inc)
+        return inc
 
     def gen_code(self):
         inc = self.check_include()

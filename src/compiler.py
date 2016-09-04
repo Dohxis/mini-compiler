@@ -209,10 +209,12 @@ class Program(object):
                     if inc not in INCLUDED:
                         output.write("#include<"+ inc +">\n")
                 for _i, node in enumerate(self.nodes):
-                    inc = node.check_include()
-                    if inc is not False and inc not in INCLUDED:
-                        output.write("#include<"+ inc +">\n")
-                        INCLUDED.append(inc)
+                    node.check_include()
+                    if node.libs != []:
+                        for lib in node.libs:
+                            if lib not in INCLUDED:
+                                output.write("#include<"+ lib +">\n")
+                                INCLUDED.append(lib)
                     if node.node == "AssignVar" and "vector" not in INCLUDED and node.array:
                          output.write("#include<vector>\n")
                          INCLUDED.append("vector")
