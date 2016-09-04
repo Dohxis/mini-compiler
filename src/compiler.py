@@ -140,7 +140,7 @@ class Program(object):
 
     def eat_args(self):
         args = ""
-        while self.peekNode().type not in ["SEMICOLON", "COLON", "LCURLY"]:
+        while self.peekNode().type != "SEMICOLON":
             args = args + self.node().value
             self.incPosN()
         return args
