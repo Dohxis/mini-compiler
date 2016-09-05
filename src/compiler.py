@@ -293,12 +293,23 @@ class Program(object):
             self.incPos()
 
         print()
-
+        curly = 0
         while self.posN < len(self.tokens):
             node = self.makeNode()
             if node != None:
                 self.nodes.append(node)
                 print(node)
+                if node.node == "FuncDefine":  # Do Not Touch
+                    curly += 1
+                if curly != 0 and(node.node == "your_node" or node.node == "your_other_node"):
+                    # add other nodes using curlies (while, for, if)
+                    curly += 1
+                    node.inside = False
+                if node.node == "End":
+                    node.inside = False
+                    curly -= 1
+                if curly != 0:
+                    node.inside = False
             self.incPosN()
 
         print()

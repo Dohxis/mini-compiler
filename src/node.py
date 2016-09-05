@@ -185,10 +185,10 @@ class FuncCall(object):
 
 class FuncDefine(object):
     def __init__(self, name, args):
-        self.node = "FuncCall"
+        self.node = "FuncDefine"
         self.name = name
         self.args = self.convert_args(args)
-        self.type = self.get_type(args)
+        self.type = self.prime(self.get_type(args))
         self.inside = False
         self.codegen = ""
         self.libs = []
@@ -196,17 +196,24 @@ class FuncDefine(object):
     def check_include(self):
         pass
 
+    def prime(self, temp):
+        if temp in PRIMTYPES:
+            return PRIMTYPES[temp]
+        return temp
+
     def __str__(self):
-        return "FuncDefine({name}, {args})".format(
+        return "FuncDefine({name}, {args}):{type}".format(
             name = self.name,
-            args = self.args
+            args = self.args,
+            type = self.type
         )
 
     def __repr__(self):
         return self.__str__()
 
     def get_type(self, args):
-        if self.args[-1:] == ")":
+        args = args.rstrip()
+        if args[-1:] == ")":
             return "void"
         else:
             listargs = list(args)
@@ -216,17 +223,17 @@ class FuncDefine(object):
                 typeT.append(listargs[pos])
                 pos -= 1
                 if listargs[pos] == ":":
-                    return "".join(list(reversed(typeT))).lower()
+                    return "".join(list(reversed(typeT)))
 
     def convert_args(self, args):
         listargs = list(args)
         pos = listargs.__len__() - 1
         while pos > 0:
-            listargs[pos] = ""
-            pos -= 1
             if listargs[pos] == ")":
                 listargs[pos] = ""
                 pos = 0
+            listargs[pos] = ""
+            pos -= 1
         pos = 1
         temparg = []
         args1 = []
@@ -252,6 +259,7 @@ class FuncDefine(object):
         while pos < self.args.__len__():
             k = self.args[pos].split(':')
             arr = [k[0]] + [l for l in k[1:]]
+            arr[1] = self.prime(arr[1])
             self.codegen += "{type} {name}".format(
                 type=arr[1],
                 name=arr[0]
@@ -266,6 +274,13 @@ class FuncDefine(object):
 class End(object):
     def __init__(self):
         self.codegen = ""
+        self.libs = []
+        self.node = "End"
+        self.inside = True
 
     def gen_code(self):
         self.codegen = "}"
+        return self.codegen
+
+    def check_include(self):
+        pass
