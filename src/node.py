@@ -271,6 +271,23 @@ class FuncDefine(object):
                 self.codegen += "){\n"
         return self.codegen
 
+class FuncReturn(object):
+    def __init__(self, args):
+        self.codegen = ""
+        self.libs = []
+        self.node = "return"
+        self.inside = True
+        self.args = args
+
+    def gen_code(self):
+        self.codegen = "return {args};\n".format(
+            args=self.args
+        )
+        return self.codegen
+
+    def check_include(self):
+        pass
+
 class End(object):
     def __init__(self):
         self.codegen = ""

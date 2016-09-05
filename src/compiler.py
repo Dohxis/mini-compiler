@@ -229,7 +229,12 @@ class Program(object):
             args = self.eat_define_args()
             return FuncDefine(name, args)
 
-        #End()
+        #Return
+        if self.node().value == "return":
+            self.incPosN()
+            args = self.eat_value()
+            return FuncReturn(args)
+        #End
         if self.node().type == "RCURLY":
             return End()
 
