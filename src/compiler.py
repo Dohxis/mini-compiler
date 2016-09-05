@@ -178,6 +178,12 @@ class Program(object):
                 self.incPosN()
             self.uses.append(setD)
 
+        # ReturnKeyword
+        if self.node().value == "return":
+            self.incPosN()
+            args = self.eat_value()
+            return FuncReturn(args)
+
         # AssignVar
         # TODO: This was a fast hack to check if we are dealing with variables or function arguments.
         # We need a better way to check this kind of action
@@ -239,11 +245,6 @@ class Program(object):
             args = self.eat_define_args()
             return FuncDefine(name, args)
 
-        #Return
-        if self.node().value == "return":
-            self.incPosN()
-            args = self.eat_value()
-            return FuncReturn(args)
         #End
         if self.node().type == "RCURLY":
             return End()

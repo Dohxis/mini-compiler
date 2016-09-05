@@ -3,5 +3,6 @@ src/__pycache__
 *.cpp
 *.h
 test
+libTest
 .idea
 *.pyc
