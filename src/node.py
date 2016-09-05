@@ -191,6 +191,10 @@ class FuncDefine(object):
         self.type = self.get_type(args)
         self.inside = False
         self.codegen = ""
+        self.libs = []
+
+    def check_include(self):
+        pass
 
     def __str__(self):
         return "FuncDefine({name}, {args})".format(
@@ -240,7 +244,7 @@ class FuncDefine(object):
 
 
     def gen_code(self):
-        self.codegen = "\t{type} {name}(".format(
+        self.codegen = "{type} {name}(".format(
             type=self.type,
             name=self.name
         )
@@ -265,4 +269,3 @@ class End(object):
 
     def gen_code(self):
         self.codegen = "}"
-

@@ -147,7 +147,7 @@ class Program(object):
 
     def eat_define_args(self):
         args = ""
-        while self.peekNode().type not in ["SEMICOLON", "LCURLY"]:
+        while self.node().type != "LCURLY":
             args = args + self.node().value
             self.incPosN()
         return args
@@ -215,17 +215,18 @@ class Program(object):
             self.incPosN()
             #arguments
             self.incPosN()
-            args = self.eat_define_args()
+            args = self.eat_args()
 
             return FuncCall(lib, name, args)
 
         # FuncDefine   Example: function name(x:Int){}
         if self.node().value == "function":
+            self.incPosN()
             #name
-            name = self.peekNode()
+            name = self.node().value
             self.incPosN()
             #arguments
-            args = self.eat_args()
+            args = self.eat_define_args()
             return FuncDefine(name, args)
 
         #End()
@@ -256,9 +257,13 @@ class Program(object):
                          output.write("#include<vector>\n")
                          INCLUDED.append("vector")
 
+                output.write("\n")
+
                 for _i, node in enumerate(self.nodes):
                     if not node.inside:
                         output.write(node.gen_code())
+
+                output.write("\n")
 
                 output.write("\nint main() {\n")
 
