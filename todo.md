@@ -10,7 +10,7 @@ variable :Int[] = [123, 123];
 func(arg1, arg2);
 __stdio::printf("%d\n", variable);
 ```
-- [ ] Function declaration [Parsing / Codegen];<br>
+- [x] Function declaration [Parsing / Codegen];<br>
 ```
 function foo(x:Int) {  }
 function bar() :Int {  }
