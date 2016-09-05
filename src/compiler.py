@@ -15,6 +15,7 @@ class Program(object):
         self.source = source
         self.need_to_include = []
         self.need_to_include_user = []
+        self.uses = []
         self.init()
 
     def char(self):
@@ -168,6 +169,15 @@ class Program(object):
             elif include is False:
                 self.need_to_include_user.append(lib)
 
+        # SetKeyword
+        if self.node().value == "set":
+            self.incPosN()
+            setD = ""
+            while self.node().type != "SEMICOLON":
+                setD = setD + self.node().value
+                self.incPosN()
+            self.uses.append(setD)
+
         # AssignVar
         # TODO: This was a fast hack to check if we are dealing with variables or function arguments.
         # We need a better way to check this kind of action
@@ -244,6 +254,10 @@ class Program(object):
         INCLUDED = []
 
         with open((self.name + ".cpp"), "w") as output:
+                # defines goes here
+                for _i, useD in enumerate(self.uses):
+                    output.write("#define "+ useD +"\n")
+
                 # includes goes here
                 for _i, inc in enumerate(self.need_to_include):
                     if inc not in INCLUDED:
