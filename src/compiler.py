@@ -168,6 +168,7 @@ class Program(object):
             if include is not False:
                 self.need_to_include.append(include)
             elif include is False:
+                lib = lib.replace("::", "/")
                 if os.path.isfile(lib + ".fr"):
                     self.args.append(lib + ".cpp")
                     compile(lib+".fr", [], True)
