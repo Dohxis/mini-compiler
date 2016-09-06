@@ -20,10 +20,10 @@ function bar() :Int {  }
 for(x in 0..10) {  }
 while(variable) {  }
 ```
-- [ ] If/else clauses [Parsing / Codegen];<br>
+- [x] If/else clauses [Parsing / Codegen];<br>
 ```
 if(variable) {  } else {  }
 ```
 
-Function variables doesn't include anything. (name:String doesn't include <string>)
+Function variables doesn't include anything. (name:String doesn't include <string>) (fixed)
 Including one than one lib.
