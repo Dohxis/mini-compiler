@@ -335,7 +335,7 @@ class ForStmt(object):
             self.codegen = "for (int {var} = {start}; {var} {compare} {end}; {var} += {increment}) ".format(
                 var = self.var,
                 start = self.args[1],
-                compare = ">",
+                compare = "<",
                 end = self.args[2],
                 increment = "1"
             )
@@ -345,7 +345,7 @@ class ForStmt(object):
                 self.codegen = "for (int {var} = {start}; {var} {compare} {end}; {var} += {increment}) ".format(
                     var = self.var,
                     start = self.args[1],
-                    compare = ">",
+                    compare = "<",
                     end = self.args[2],
                     increment = self.args[3]
                 )
