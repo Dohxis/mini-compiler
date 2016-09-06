@@ -250,7 +250,7 @@ class FuncDefine(object):
         return temparg
 
 
-    def gen_code(self):
+    def gen_code(self, lib=False):
         self.codegen = "{type} {name}(".format(
             type=self.type,
             name=self.name
@@ -268,7 +268,10 @@ class FuncDefine(object):
             if pos != self.args.__len__():
                 self.codegen += ", "
             else:
-                self.codegen += "){\n"
+                if not lib:
+                    self.codegen += "){\n"
+                else:
+                    self.codegen += ");\n"
         return self.codegen
 
 class FuncReturn(object):
@@ -280,7 +283,7 @@ class FuncReturn(object):
         self.args = args
 
     def gen_code(self):
-        self.codegen = "return {args};\n".format(
+        self.codegen = "\treturn {args};\n".format(
             args=self.args
         )
         return self.codegen

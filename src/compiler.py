@@ -4,7 +4,7 @@ import os
 
 class Program(object):
 
-    def __init__(self, source, name, args):
+    def __init__(self, source, name, args, lib=False):
         self.name = name
         self.pos = 0
         self.posN = 0
@@ -12,6 +12,7 @@ class Program(object):
         self.tokens = []
         self.nodes = []
         self.args = args
+        self.lib = lib
         self.source = source
         self.need_to_include = []
         self.need_to_include_user = []
@@ -167,6 +168,9 @@ class Program(object):
             if include is not False:
                 self.need_to_include.append(include)
             elif include is False:
+                if os.path.isfile(lib + ".fr"):
+                    self.args.append(lib + ".cpp")
+                    compile(lib+".fr", [], True)
                 self.need_to_include_user.append(lib)
 
         # SetKeyword
@@ -254,7 +258,65 @@ class Program(object):
 
         INCLUDED = []
 
-        with open((self.name + ".cpp"), "w") as output:
+        build_name = self.name + ".cpp"
+
+        with open(build_name, "w") as output:
+
+                # defines goes here
+                for _i, useD in enumerate(self.uses):
+                    output.write("#define "+ useD +"\n")
+
+                # includes goes here
+                for _i, inc in enumerate(self.need_to_include):
+                    if inc not in INCLUDED:
+                        output.write("#include<"+ inc +">\n")
+                for _i, inc in enumerate(self.need_to_include_user):
+                    if inc not in INCLUDED:
+                        output.write("#include \""+ inc +".h\"\n")
+                for _i, node in enumerate(self.nodes):
+                    node.check_include()
+                    if node.libs != []:
+                        for lib in node.libs:
+                            if lib not in INCLUDED:
+                                output.write("#include<"+ lib +">\n")
+                                INCLUDED.append(lib)
+                    if node.node == "AssignVar" and "vector" not in INCLUDED and node.array:
+                         output.write("#include<vector>\n")
+                         INCLUDED.append("vector")
+
+                output.write("\n")
+
+                if not self.lib:
+
+                    for _i, node in enumerate(self.nodes):
+                        if not node.inside:
+                            output.write(node.gen_code())
+
+                    output.write("\n")
+
+                    output.write("\nint main() {\n")
+
+                    # code goes here expect of new functions and imports
+                    # node.inside is a boolean which says if the node has
+                    # to be compiled inside the main function
+                    for _i, node in enumerate(self.nodes):
+                        if node.inside:
+                            output.write(node.gen_code())
+
+                    output.write("\treturn 0;\n")
+                    output.write("}\n")
+
+                else:
+
+                    for _i, node in enumerate(self.nodes):
+                        output.write(node.gen_code())
+                    output.write("\n")
+
+        if self.lib:
+            with open((self.name + ".h"), "w")as output:
+                output.write("#ifndef _FR_LIB_"+ self.name.upper() +"_\n")
+                output.write("#define _FR_LIB_"+ self.name.upper() +"_\n")
+
                 # defines goes here
                 for _i, useD in enumerate(self.uses):
                     output.write("#define "+ useD +"\n")
@@ -280,22 +342,10 @@ class Program(object):
                 output.write("\n")
 
                 for _i, node in enumerate(self.nodes):
-                    if not node.inside:
-                        output.write(node.gen_code())
+                    if node.node == "FuncDefine":
+                        output.write(node.gen_code(True))
 
-                output.write("\n")
-
-                output.write("\nint main() {\n")
-
-                # code goes here expect of new functions and imports
-                # node.inside is a boolean which says if the node has
-                # to be compiled inside the main function
-                for _i, node in enumerate(self.nodes):
-                    if node.inside:
-                        output.write(node.gen_code())
-
-                output.write("\treturn 0;\n")
-                output.write("}\n")
+                output.write("\n#endif\n")
 
         newArgs = ""
         for arg in self.args:
@@ -338,7 +388,7 @@ class Program(object):
         self.compile_to_cpp()
 
 
-def compile(source_file, args):
+def compile(source_file, args, lib=False):
     name = os.path.splitext(source_file)[0]
     with open(source_file, 'r') as source_file:
-        return Program(source_file.read(), name, args)
+        return Program(source_file.read(), name, args, lib)
