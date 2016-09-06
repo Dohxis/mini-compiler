@@ -304,3 +304,69 @@ class End(object):
 
     def check_include(self):
         pass
+        
+class ForStmt(object):
+
+    def __init__(self, var, args):
+        self.node = "ForStmt"
+        self.var = var
+        self.args = args.split("in")
+        args2 = self.args[1].split(";")
+        self.args = [self.args[0]] + args2[0].split("..") + args2[1:]
+        self.inside = True
+        self.codegen = ""
+        self.libs = []
+
+    def __str__(self):
+        return "ForStmt({var}, {args})".format(
+            var = self.var,
+            args = self.args
+        )
+
+    def __repr__(self):
+        return self.__str__()
+
+    def check_include(self):
+        pass
+    
+    def gen_code(self):
+        
+        if len(self.args) == 3:
+            self.codegen = "for (int {var} = {start}; {var} {compare} {end}; {var} += {increment}) ".format(
+                var = self.var,
+                start = self.args[1],
+                compare = ">",
+                end = self.args[2],
+                increment = "1"
+            )
+        
+        elif len(self.args) == 4:
+            if self.args[3].isdigit():
+                self.codegen = "for (int {var} = {start}; {var} {compare} {end}; {var} += {increment}) ".format(
+                    var = self.var,
+                    start = self.args[1],
+                    compare = ">",
+                    end = self.args[2],
+                    increment = self.args[3]
+                )
+            
+            else:
+                self.codegen = "for (int {var} = {start}; {var} {compare} {end}; {var} += {increment}) ".format(
+                    var = self.var,
+                    start = self.args[1],
+                    compare = self.args[3],
+                    end = self.args[2],
+                    increment = "1"
+                )
+        
+        else:
+            self.codegen = "for (int {var} = {start}; {var} {compare} {end}; {var} += {increment}) ".format(
+                var = self.var,
+                start = self.args[1],
+                compare = self.args[3],
+                end = self.args[2],
+                increment = self.args[4]
+            )
+        
+        self.codegen += "{\n"
+        return self.codegen

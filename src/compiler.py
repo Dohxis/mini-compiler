@@ -153,6 +153,13 @@ class Program(object):
             args = args + self.node().value
             self.incPosN()
         return args
+    
+    def eat_for_args(self):
+        value = ""
+        while self.node().type != "RPAREN":
+            value = value + self.node().value
+            self.incPosN()
+        return value
 
 
     def makeNode(self):
@@ -187,6 +194,14 @@ class Program(object):
             self.incPosN()
             args = self.eat_value()
             return FuncReturn(args)
+        
+        # for statements
+        if self.node().value == "for":
+            self.incPosN()
+            self.incPosN()
+            var = self.node().value
+            args = self.eat_for_args()
+            return ForStmt(var, args)
 
         # AssignVar
         # TODO: This was a fast hack to check if we are dealing with variables or function arguments.
