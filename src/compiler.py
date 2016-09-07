@@ -219,6 +219,21 @@ class Program(object):
 
             return AssignVar(name, type, value)
 
+        # IfClause
+        if self.node().value == "if" or self.node().value == "else":
+            if self.node().value == "if":
+                name = "if"
+            else:
+                name = "else"
+            self.incPosN()
+            if self.node().value == "if":
+                self.incPosN()
+                name = "else if"
+            args = ""
+            if name != "else":
+                args = self.eat_define_args()
+            return IfClause(args, name)
+
         # ModVar
         if(self.node().type == "DEFINITION" and (self.peekNode().type == "EQUAL" or self.peekNode(4).type == "EQUAL")):
             #name
@@ -390,7 +405,7 @@ class Program(object):
                 if node.node == "FuncDefine":  # Do Not Touch
                     curly += 1
                 if curly != 0:
-                    if node.node == "ForStmt" or node.node == "your_other_node":
+                    if node.node == "ForStmt" or node.node == "IfClause":
                         # add other nodes using curlies (while, for, if)
                         curly += 1
                         node.inside = False

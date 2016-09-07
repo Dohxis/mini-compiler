@@ -260,7 +260,7 @@ class FuncDefine(object):
         typeF = typeR.rstrip()
         if typeF.endswith("[]"):
             typeF = self.prime(typeF[:-2])
-            return "std::vector<{type}> ".format(
+            return "std::vector<{type}>".format(
                 type=typeF
             )
         return typeF
@@ -322,7 +322,36 @@ class End(object):
 
     def check_include(self):
         pass
-        
+
+class IfClause(object):
+    def __init__(self, args, name):
+        self.node = "IfClause"
+        self.args = args
+        self.name = name
+        self.inside = True
+        self.codegen = ""
+        self.libs = []
+
+    def check_include(self):
+        pass
+
+    def __str__(self):
+        return "IfClause({args})".format(
+            args=self.args,
+        )
+
+    def __repr__(self):
+        return self.__str__()
+
+    def gen_code(self):
+        args1, _ = check_for_functions(self.args)
+        self.codegen = "\t{name}{args}".format(
+            args = args1,
+            name=self.name
+        )
+        self.codegen += "{\n"
+        return self.codegen
+
 class ForStmt(object):
 
     def __init__(self, var, args):
