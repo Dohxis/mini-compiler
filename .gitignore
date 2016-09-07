@@ -3,6 +3,7 @@ src/__pycache__
 *.h
 test.fr
 test
+tests/bubbleSort
 libTest
 Freya/freya
 .idea
