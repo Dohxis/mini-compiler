@@ -1,6 +1,6 @@
-`src/codegen/cpp/*.fr` - All codegen code goes here
-`src/nodes/*.fr` - All nodes goes here
-`src/token.fr` - Base Token() code
-`src/tokenizer.fr` - Tokenizer()
-`src/astbuilder.fr` - ASTBuilder()
-`freya.fr` - Entry point
+`src/codegen/cpp/*.fr` - All codegen code goes here<br />
+`src/nodes/*.fr` - All nodes goes here<br />
+`src/token.fr` - Base Token() code<br />
+`src/tokenizer.fr` - Tokenizer()<br />
+`src/astbuilder.fr` - ASTBuilder()<br />
+`freya.fr` - Entry point<br />
