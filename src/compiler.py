@@ -388,7 +388,7 @@ class Program(object):
                 if node.node == "FuncDefine":  # Do Not Touch
                     curly += 1
                 if curly != 0:
-                    if node.node == "your_node" or node.node == "your_other_node":
+                    if node.node == "ForStmt" or node.node == "your_other_node":
                         # add other nodes using curlies (while, for, if)
                         curly += 1
                         node.inside = False

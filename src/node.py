@@ -249,6 +249,13 @@ class FuncDefine(object):
         temparg.append("".join(args1))
         return temparg
 
+    def include_libs(self, type):
+        typeR = type.rstrip()
+        print(typeR)
+        if typeR.startswith("String"):
+            self.libs.append("string")
+        if typeR.endswith("[]"):
+            self.libs.append("vector")
 
     def gen_code(self, lib=False):
         self.codegen = "{type} {name}(".format(
@@ -257,13 +264,16 @@ class FuncDefine(object):
         )
         pos = 0
         while pos < self.args.__len__():
-            k = self.args[pos].split(':')
-            arr = [k[0]] + [l for l in k[1:]]
-            arr[1] = self.prime(arr[1])
-            self.codegen += "{type} {name}".format(
-                type=arr[1],
-                name=arr[0]
-            )
+            if self.args[pos] != "":
+                k = self.args[pos].split(':')
+                arr = [k[0]] + [l for l in k[1:]]
+                self.include_libs(arr[1])
+                arr[1] = self.vector_check(arr[1])
+                arr[1] = self.prime(arr[1])
+                self.codegen += "{type} {name}".format(
+                    type=arr[1],
+                    name=arr[0]
+                )
             pos += 1
             if pos != self.args.__len__():
                 self.codegen += ", "
