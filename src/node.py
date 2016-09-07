@@ -188,7 +188,7 @@ class FuncDefine(object):
         self.node = "FuncDefine"
         self.name = name
         self.args = self.convert_args(args)
-        self.type = self.prime(self.get_type(args))
+        self.type = self.prime(self.vector_check(self.get_type(args)))
         self.inside = False
         self.codegen = ""
         self.libs = []
@@ -251,11 +251,19 @@ class FuncDefine(object):
 
     def include_libs(self, type):
         typeR = type.rstrip()
-        print(typeR)
         if typeR.startswith("String"):
             self.libs.append("string")
         if typeR.endswith("[]"):
             self.libs.append("vector")
+
+    def vector_check(self, typeR):
+        typeF = typeR.rstrip()
+        if typeF.endswith("[]"):
+            typeF = self.prime(typeF[:-2])
+            return "std::vector<{type}> ".format(
+                type=typeF
+            )
+        return typeF
 
     def gen_code(self, lib=False):
         self.codegen = "{type} {name}(".format(
@@ -309,7 +317,7 @@ class End(object):
         self.inside = True
 
     def gen_code(self):
-        self.codegen = "}"
+        self.codegen = "}\n"
         return self.codegen
 
     def check_include(self):

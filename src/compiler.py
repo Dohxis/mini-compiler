@@ -291,6 +291,8 @@ class Program(object):
                         output.write("#include \""+ inc +".h\"\n")
                 for _i, node in enumerate(self.nodes):
                     node.check_include()
+                    if node.node == "FuncDefine":
+                        node.gen_code()
                     if node.libs != []:
                         for lib in node.libs:
                             if lib not in INCLUDED:
