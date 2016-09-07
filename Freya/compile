@@ -1,0 +1,14 @@
+#!/bin/sh
+
+PYV=`python -c "import sys;t='{v[0]}'.format(v=list(sys.version_info));sys.stdout.write(t)";`
+if [ $PYV -ne 3 ]; then
+  PYTHON=python3
+else
+  PYTHON=python
+fi
+
+$PYTHON ../src/main.py freya.fr
+
+if [ "$1" = "--clean" ]; then
+  rm -rf *.cpp *.h
+fi

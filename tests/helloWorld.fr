@@ -1,0 +1,1 @@
+__stdio::printf("Hello World!\n");
