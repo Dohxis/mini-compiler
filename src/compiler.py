@@ -153,10 +153,10 @@ class Program(object):
             args = args + self.node().value
             self.incPosN()
         return args
-    
+
     def eat_for_args(self):
         value = ""
-        while self.node().type != "RPAREN":
+        while self.peekNode().type != "LCURLY":
             value = value + self.node().value
             self.incPosN()
         return value
@@ -195,7 +195,7 @@ class Program(object):
             self.incPosN()
             args = self.eat_value()
             return FuncReturn(args)
-        
+
         # for statements
         if self.node().value == "for":
             self.incPosN()
