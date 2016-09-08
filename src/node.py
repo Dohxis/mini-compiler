@@ -2,7 +2,9 @@
 PRIMTYPES = {
     "Int": "int",
     "String": "std::string",
-    "Float": "double"
+    "Float": "double",
+    "Bool": "bool",
+    "UInt": "unsigned int"
 }
 
 # Type includes
@@ -375,9 +377,9 @@ class ForStmt(object):
 
     def check_include(self):
         pass
-    
+
     def gen_code(self):
-        
+
         if len(self.args) == 3:
             self.codegen = "for (int {var} = {start}; {var} {compare} {end}; {var} += {increment}) ".format(
                 var = self.var,
@@ -386,7 +388,7 @@ class ForStmt(object):
                 end = self.args[2],
                 increment = "1"
             )
-        
+
         elif len(self.args) == 4:
             if self.args[3].isdigit():
                 self.codegen = "for (int {var} = {start}; {var} {compare} {end}; {var} += {increment}) ".format(
@@ -396,7 +398,7 @@ class ForStmt(object):
                     end = self.args[2],
                     increment = self.args[3]
                 )
-            
+
             else:
                 self.codegen = "for (int {var} = {start}; {var} {compare} {end}; {var} += {increment}) ".format(
                     var = self.var,
@@ -405,7 +407,7 @@ class ForStmt(object):
                     end = self.args[2],
                     increment = "1"
                 )
-        
+
         else:
             self.codegen = "for (int {var} = {start}; {var} {compare} {end}; {var} += {increment}) ".format(
                 var = self.var,
@@ -414,6 +416,6 @@ class ForStmt(object):
                 end = self.args[2],
                 increment = self.args[4]
             )
-        
+
         self.codegen += "{\n"
         return self.codegen

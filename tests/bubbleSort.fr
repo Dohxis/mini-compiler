@@ -13,8 +13,9 @@ function bubbleSort(numbers :Int[]) :Int[] {
   return numbers;
 }
 
-numbers :Int[] = [10, 30, 1, 5, 71];
+numbers :Int[] = [43,21,12,80,3,2,35,12,54,122,67];
 numbers = bubbleSort(numbers);
 for(i in 0..numbers.size()){
   printf("%d ", numbers[i]);
 }
+printf("\n");
