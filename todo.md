@@ -25,5 +25,5 @@ while(variable) {  }
 if(variable) {  } else {  }
 ```
 
-Function variables doesn't include anything. (name:String doesn't include <string>) (fixed)
+Function variables doesn't include anything. (name:String doesn't include <string>) (fixed)<br />
 Including one than one lib.
