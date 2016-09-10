@@ -4,7 +4,8 @@ PRIMTYPES = {
     "String": "std::string",
     "Float": "double",
     "Bool": "bool",
-    "UInt": "unsigned int"
+    "UInt": "unsigned int",
+    "size_t": "size_t"
 }
 
 # Type includes
