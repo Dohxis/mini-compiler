@@ -4,3 +4,6 @@
 `src/tokenizer.fr` - Tokenizer()<br />
 `src/astbuilder.fr` - ASTBuilder()<br />
 `freya.fr` - Entry point<br />
+
+## Compile
+To compile run `compile` shell script. `./compile --clean` will compile and clean work directory.
