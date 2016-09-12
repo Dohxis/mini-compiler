@@ -17,6 +17,7 @@ class Program(object):
         self.need_to_include = []
         self.need_to_include_user = []
         self.uses = []
+        self.use_args = False
         self.init()
 
     def char(self):
@@ -188,7 +189,10 @@ class Program(object):
             while self.node().type != "SEMICOLON":
                 setD = setD + self.node().value
                 self.incPosN()
-            self.uses.append(setD)
+            if(setD == "USE_ARGS"):
+                self.use_args = True
+            else:
+                self.uses.append(setD)
 
         # ReturnKeyword
         if self.node().value == "return":
@@ -327,7 +331,10 @@ class Program(object):
 
                     output.write("\n")
 
-                    output.write("\nint main() {\n")
+                    if self.use_args:
+                        output.write("\nint main(int argc, char* argv[]) {\n")
+                    else:
+                        output.write("\nint main() {\n")
 
                     # code goes here expect of new functions and imports
                     # node.inside is a boolean which says if the node has

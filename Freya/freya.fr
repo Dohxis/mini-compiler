@@ -1,0 +1,3 @@
+set USE_ARGS;
+
+__stdio::printf("First argument %s\n", argv[1]);
