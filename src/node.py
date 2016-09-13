@@ -441,7 +441,6 @@ class ForStmt(object):
         self.codegen += "{\n"
         return self.codegen
 
-<<<<<<< HEAD
 class StructStmt(object):
 
     def __init__(self, name):
@@ -468,7 +467,7 @@ class StructStmt(object):
         )
         self.codegen += "{"
         return self.codegen
-=======
+
 class WhileStmt(object):
     
         def __init__(self, args):
@@ -496,4 +495,3 @@ class WhileStmt(object):
             self.codegen += "{\n"
             return self.codegen
 
->>>>>>> 70f7dfdae1e7adf59b72326b713cc8698fe7f6b9
