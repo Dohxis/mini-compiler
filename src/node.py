@@ -75,7 +75,10 @@ class AssignVar(object):
         self.inside = True
         self.array = False
         self.codegen = ""
-        self.value, self.libs = check_for_functions(self.value)
+        if self.value != None:
+            self.value, self.libs = check_for_functions(self.value)
+        else:
+            self.libs = []
 
         if self.type.endswith("[]"):
             self.array = True
@@ -101,21 +104,36 @@ class AssignVar(object):
             self.libs.append(INCTYPES[self.type])
 
     def gen_code(self):
-        # TODO: Add support for arrays.
-        if self.type in PRIMTYPES:
-            self.type = PRIMTYPES[self.type]
-        if self.array:
-            self.codegen = "\tstd::vector<{type}> {name} = {value};\n".format(
-                type = self.type,
-                name = self.var,
-                value = self.value
-            )
+        if self.value == None:
+            # TODO: Add support for arrays.
+            if self.type in PRIMTYPES:
+                self.type = PRIMTYPES[self.type]
+            if self.array:
+                self.codegen = "\tstd::vector<{type}> {name};\n".format(
+                    type = self.type,
+                    name = self.var,
+                )
+            else:
+                self.codegen = "\t{type} {name};\n".format(
+                    type = self.type,
+                    name = self.var,
+                )
         else:
-            self.codegen = "\t{type} {name} = {value};\n".format(
-                type = self.type,
-                name = self.var,
-                value = self.value
-            )
+            # TODO: Add support for arrays.
+            if self.type in PRIMTYPES:
+                self.type = PRIMTYPES[self.type]
+            if self.array:
+                self.codegen = "\tstd::vector<{type}> {name} = {value};\n".format(
+                    type = self.type,
+                    name = self.var,
+                    value = self.value
+                )
+            else:
+                self.codegen = "\t{type} {name} = {value};\n".format(
+                    type = self.type,
+                    name = self.var,
+                    value = self.value
+                )
         return self.codegen
 
 class ModVar(object):
@@ -423,6 +441,34 @@ class ForStmt(object):
         self.codegen += "{\n"
         return self.codegen
 
+<<<<<<< HEAD
+class StructStmt(object):
+
+    def __init__(self, name):
+        self.node = "StructStmt"
+        self.name = name
+        self.inside = False
+        self.codegen = ""
+        self.libs = []
+
+    def __str__(self):
+        return "StructStmt({name})".format(
+            name = self.name
+        )
+
+    def __repr__(self):
+        return self.__str__()
+
+    def check_include(self):
+        pass
+
+    def gen_code(self):
+        self.codegen = "struct {name} ".format(
+            name = self.name
+        )
+        self.codegen += "{"
+        return self.codegen
+=======
 class WhileStmt(object):
     
         def __init__(self, args):
@@ -450,3 +496,4 @@ class WhileStmt(object):
             self.codegen += "{\n"
             return self.codegen
 
+>>>>>>> 70f7dfdae1e7adf59b72326b713cc8698fe7f6b9

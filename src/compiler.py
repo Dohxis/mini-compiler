@@ -201,6 +201,13 @@ class Program(object):
             else:
                 self.uses.append(setD)
 
+        # StructType
+        if self.node().value == "struct":
+            self.incPosN()
+            name = self.node().value
+            self.incPosN()
+            return StructStmt(name)
+
         # ReturnKeyword
         if self.node().value == "return":
             self.incPosN()
@@ -214,6 +221,20 @@ class Program(object):
             var = self.node().value
             args = self.eat_for_args()
             return ForStmt(var, args)
+
+        # AssignVar (Without init)
+        # TODO: This was a fast hack to check if we are dealing with variables or function arguments.
+        # We need a better way to check this kind of action
+        if(self.node().type == "DEFINITION" and self.peekNode().type == "COLON" and (self.peekNode(3).type == "SEMICOLON" or self.peekNode(5).type == "SEMICOLON")):
+            # name
+            name = self.node().value
+            self.incPosN()
+            # type
+            type = self.eat_value()
+            # semicolon
+            self.incPosN()
+
+            return AssignVar(name, type, None)
 
         # while statements
         if self.node().value == "while":
@@ -420,10 +441,13 @@ class Program(object):
         curly = 0
         while self.posN < len(self.tokens):
             node = self.makeNode()
+            addSemi = False
             if node != None:
                 self.nodes.append(node)
                 print(node)
-                if node.node == "FuncDefine":  # Do Not Touch
+                if node.node == "FuncDefine" or node.node == "StructStmt":  # Do Not Touch
+                    if node.node == "StructStmt":
+                        addSemi = True
                     curly += 1
                 if curly != 0:
                     if node.node == "ForStmt" or node.node == "IfClause" or node.node == "WhileStmt":
@@ -434,6 +458,8 @@ class Program(object):
                         node.inside = False
                         curly -= 1
                     if curly != 0:
+                        if addSemi:
+                            node.codegen += ";"
                         node.inside = False
             self.incPosN()
 

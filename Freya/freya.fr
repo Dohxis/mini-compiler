@@ -1,3 +1,7 @@
 set USE_ARGS;
+use __stdio;
 
-__stdio::printf("First argument %s\n", argv[1]);
+if(argc < 2) {
+  printf("Usage: freya [main.fr]\n");
+  return 0;
+}
