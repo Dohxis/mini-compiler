@@ -162,6 +162,13 @@ class Program(object):
             self.incPosN()
         return value
 
+    def eat_while_args(self):
+        value = ""
+        while self.peekNode().type != "LCURLY":
+            value = value + self.node().value
+            self.incPosN()
+        return value
+
 
     def makeNode(self):
 
@@ -228,6 +235,13 @@ class Program(object):
             self.incPosN()
 
             return AssignVar(name, type, None)
+
+        # while statements
+        if self.node().value == "while":
+            self.incPosN()
+            self.incPosN()
+            args = self.eat_while_args()
+            return WhileStmt(args)
 
         # AssignVar
         # TODO: This was a fast hack to check if we are dealing with variables or function arguments.
@@ -436,7 +450,7 @@ class Program(object):
                         addSemi = True
                     curly += 1
                 if curly != 0:
-                    if node.node == "ForStmt" or node.node == "IfClause":
+                    if node.node == "ForStmt" or node.node == "IfClause" or node.node == "WhileStmt":
                         # add other nodes using curlies (while, for, if)
                         curly += 1
                         node.inside = False

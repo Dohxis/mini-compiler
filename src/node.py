@@ -439,6 +439,7 @@ class ForStmt(object):
         self.codegen += "{\n"
         return self.codegen
 
+<<<<<<< HEAD
 class StructStmt(object):
 
     def __init__(self, name):
@@ -465,3 +466,32 @@ class StructStmt(object):
         )
         self.codegen += "{"
         return self.codegen
+=======
+class WhileStmt(object):
+    
+        def __init__(self, args):
+            self.node = "ForStmt"
+            self.args = args
+            self.inside = True
+            self.codegen = ""
+            self.libs = []
+
+        def __str__(self):
+            return "ForStmt({args})".format(
+                args = self.args
+            )
+
+        def __repr__(self):
+            return self.__str__()
+
+        def check_include(self):
+            pass
+
+        def gen_code(self):
+            self.codegen += "while ({args})".format(
+                args = self.args
+            )
+            self.codegen += "{\n"
+            return self.codegen
+
+>>>>>>> 70f7dfdae1e7adf59b72326b713cc8698fe7f6b9
