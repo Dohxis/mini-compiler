@@ -380,44 +380,46 @@ class ForStmt(object):
         pass
 
     def gen_code(self):
-
-        if len(self.args) == 3:
-            self.codegen = "for (int {var} = {start}; {var} {compare} {end}; {var} += {increment}) ".format(
-                var = self.var,
-                start = self.args[1],
-                compare = "<",
-                end = self.args[2],
-                increment = "1"
-            )
-
-        elif len(self.args) == 4:
-            if self.args[3].isdigit():
-                self.codegen = "for (int {var} = {start}; {var} {compare} {end}; {var} += {increment}) ".format(
-                    var = self.var,
-                    start = self.args[1],
-                    compare = "<",
-                    end = self.args[2],
-                    increment = self.args[3]
-                )
-
-            else:
-                self.codegen = "for (int {var} = {start}; {var} {compare} {end}; {var} += {increment}) ".format(
-                    var = self.var,
-                    start = self.args[1],
-                    compare = self.args[3],
-                    end = self.args[2],
-                    increment = "1"
-                )
-
+        
+        vartype = "int"
+        varname = var = self.var
+        varstart = self.args[1]
+        varend = self.args[2]
+        if varstart < varend:
+            comparator = "<"
         else:
-            self.codegen = "for (int {var} = {start}; {var} {compare} {end}; {var} += {increment}) ".format(
-                var = self.var,
-                start = self.args[1],
-                compare = self.args[3],
-                end = self.args[2],
-                increment = self.args[4]
-            )
-
+            comparator = ">"
+        increment_by = "1"
+        
+        if len(self.args) >= 4:
+            if self.args[3].isdigit():
+                vartype = "int"
+                increment_by = self.args[3]
+            elif "." in self.args[3]:
+                vartype = "double"
+                increment_by = self.args[3]
+            else:
+                comparator = self.args[3]
+        
+        if len(self.args) == 5:
+            if self.args[4].isdigit():
+                vartype = "int"
+                increment_by = self.args[4]
+            elif "." in self.args[4]:
+                vartype = "double"
+                increment_by = self.args[4]
+            else:
+                comparator = self.args[4]
+        
+        self.codegen = "for ({type} {var} = {start}; {var} {compare} {end}; {var} += {increment}) ".format(
+            type = vartype,
+            var = self.var,
+            start = varstart,
+            compare = comparator,
+            end = varend,
+            increment = increment_by
+        )
+        
         self.codegen += "{\n"
         return self.codegen
 
