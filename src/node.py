@@ -336,9 +336,13 @@ class End(object):
         self.libs = []
         self.node = "End"
         self.inside = True
+        self.addSemi = False
 
     def gen_code(self):
-        self.codegen = "}\n"
+        self.codegen = "}"
+        if self.addSemi:
+            self.codegen += ";"
+        self.codegen += "\n"
         return self.codegen
 
     def check_include(self):

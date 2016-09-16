@@ -232,7 +232,7 @@ class Program(object):
             # type
             type = self.eat_value()
             # semicolon
-            self.incPosN()
+            #self.incPosN()
 
             return AssignVar(name, type, None)
 
@@ -427,6 +427,7 @@ class Program(object):
             newArgs = newArgs + arg + " "
 
         os.system("cat " + self.name + ".cpp")
+        os.system("type " + self.name + ".cpp")
         os.system("g++ -std=c++11 " + self.name + ".cpp " + newArgs + " -o " + self.name)
 
     def init(self):
@@ -439,28 +440,28 @@ class Program(object):
 
         print()
         curly = 0
+        addSemi = False
         while self.posN < len(self.tokens):
             node = self.makeNode()
-            addSemi = False
             if node != None:
                 self.nodes.append(node)
                 print(node)
                 if node.node == "FuncDefine" or node.node == "StructStmt":  # Do Not Touch
+                    curly += 1
                     if node.node == "StructStmt":
                         addSemi = True
-                    curly += 1
                 if curly != 0:
+                    node.inside = False
                     if node.node == "ForStmt" or node.node == "IfClause" or node.node == "WhileStmt":
                         # add other nodes using curlies (while, for, if)
                         curly += 1
-                        node.inside = False
                     if node.node == "End":
                         node.inside = False
                         curly -= 1
-                    if curly != 0:
+                    if curly == 0:
                         if addSemi:
-                            node.codegen += ";"
-                        node.inside = False
+                            node.addSemi = True
+                            addSemi = False
             self.incPosN()
 
         print()
