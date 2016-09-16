@@ -231,6 +231,7 @@ class Program(object):
             self.incPosN()
             # type
             type = self.eat_value()
+            print(name, type)
             # semicolon
             #self.incPosN()
 

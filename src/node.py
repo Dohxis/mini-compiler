@@ -75,19 +75,28 @@ class AssignVar(object):
         self.inside = True
         self.array = False
         self.codegen = ""
+        # --SliceStart--
+        tempType = list(self.type)
+        if tempType[0] == ":":
+            tempType[0] = ""
+        tempType = "".join(tempType).split("=")
+        if tempType.__len__() == 2:
+            self.value = tempType[1]
+        self.type = tempType[0]
+        # --SliceEnd--
         if self.value != None:
             self.value, self.libs = check_for_functions(self.value)
         else:
             self.libs = []
-
         if self.type.endswith("[]"):
             self.array = True
             self.type = self.type[:-2]
-            self.value = list(self.value)
-            self.value[0] = "{"
-            self.value[len(self.value)-1] = "}"
-            new = "".join(self.value)
-            self.value = new
+            if self.value is not None:
+                self.value = list(self.value)
+                self.value[0] = "{"
+                self.value[len(self.value)-1] = "}"
+                new = "".join(self.value)
+                self.value = new
 
     def __str__(self):
         return "AssignVar({var}, {type}, {value})".format(
