@@ -8,3 +8,4 @@ libTest
 Freya/freya
 .idea
 *.pyc
+Freya/build

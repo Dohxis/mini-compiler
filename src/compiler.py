@@ -429,6 +429,7 @@ class Program(object):
 
         os.system("cat " + self.name + ".cpp")
         os.system("type " + self.name + ".cpp")
+        os.system("clang-format -i " + self.name + ".cpp")
         os.system("g++ -std=c++11 " + self.name + ".cpp " + newArgs + " -o " + self.name)
 
     def init(self):

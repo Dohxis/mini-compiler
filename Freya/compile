@@ -7,8 +7,13 @@ else
   PYTHON=python
 fi
 
-$PYTHON ../src/main.py freya.fr
+$PYTHON ../src/main.py src/freya.fr
+mkdir -p build
+mv src/*.cpp build
+mv src/*.h build
+mv src/freya build/freya
+./build/freya
 
 if [ "$1" = "--clean" ]; then
-  rm -rf *.cpp *.h
+  rm -rf src/*.cpp src/*.h build/
 fi
