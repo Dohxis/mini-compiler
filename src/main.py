@@ -20,6 +20,5 @@ def getFileToCompile():
 
 if __name__ == "__main__":
     newArgs = sys.argv[2:]
-    print(newArgs)
     file = getFileToCompile()
     compiler.compile(file, newArgs)

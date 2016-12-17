@@ -427,7 +427,6 @@ class Program(object):
         for arg in self.args:
             newArgs = newArgs + arg + " "
 
-        os.system("cat " + self.name + ".cpp")
         os.system("type " + self.name + ".cpp")
         os.system("clang-format -i " + self.name + ".cpp")
         os.system("g++ -std=c++11 " + self.name + ".cpp " + newArgs + " -o " + self.name)
@@ -437,17 +436,17 @@ class Program(object):
             token = self.tokenize()
             if token != None:
                 self.tokens.append(token)
-                print(token)
+                # print(token)
             self.incPos()
 
-        print()
+        #   print()
         curly = 0
         addSemi = False
         while self.posN < len(self.tokens):
             node = self.makeNode()
             if node != None:
                 self.nodes.append(node)
-                print(node)
+                # print(node)
                 if node.node == "FuncDefine" or node.node == "StructStmt":  # Do Not Touch
                     curly += 1
                     if node.node == "StructStmt":
