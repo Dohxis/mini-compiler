@@ -2,7 +2,12 @@ set USE_ARGS;
 use __stdio;
 use src::printing;
 
-if(argc < 2) {
-  printf("Usage: freya [main.fr]\n");
-  return 0;
+function usage(){
+    error();
+    printf("No source file provided!\n\n");
+    printf("Usage:\n\tfreya [file.fr]\n\n");
+}
+
+if(argc != 2){
+    usage();
 }
