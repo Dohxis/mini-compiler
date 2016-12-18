@@ -339,8 +339,9 @@ class Program(object):
         with open(build_name, "w") as output:
 
                 # defines goes here
-                for _i, useD in enumerate(self.uses):
-                    output.write("#define "+ useD +"\n")
+                if not self.lib:
+                    for _i, useD in enumerate(self.uses):
+                        output.write("#define "+ useD +"\n")
 
                 # includes goes here
                 for _i, inc in enumerate(self.need_to_include):

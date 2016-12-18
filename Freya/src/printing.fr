@@ -1,0 +1,13 @@
+use __stdio;
+
+set C_RESET  "\x1B[0m";
+set C_RED  "\x1B[31m";
+set C_YELLOW  "\x1B[33m";
+
+function error(){
+    printf("%s~=~=~= Error =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~%s\n", C_RED, C_RESET);
+}
+
+function warning(){
+    printf("%s~=~=~= Warning =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~%s\n", C_YELLOW, C_RESET);
+}

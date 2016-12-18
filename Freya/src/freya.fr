@@ -1,9 +1,8 @@
 set USE_ARGS;
 use __stdio;
-use src::lexer;
+use src::printing;
 
 if(argc < 2) {
-  lex();
   printf("Usage: freya [main.fr]\n");
   return 0;
 }

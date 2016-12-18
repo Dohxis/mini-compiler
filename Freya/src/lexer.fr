@@ -1,5 +1,0 @@
-use __stdio;
-
-function lex() {
-    printf("Test import;\n");
-}
