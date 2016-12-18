@@ -4,13 +4,14 @@ import os
 
 class Program(object):
 
-    def __init__(self, source, name, args, lib=False):
+    def __init__(self, source, name, args, lib=False, path_to=""):
         self.name = name
         self.pos = 0
         self.posN = 0
         self.nodes = []
         self.tokens = []
         self.nodes = []
+        self.path_to = path_to
         self.args = args
         self.lib = lib
         self.source = source
@@ -184,10 +185,11 @@ class Program(object):
                 self.need_to_include.append(include)
             elif include is False:
                 lib = lib.replace("::", "/")
+                # print(lib)
                 if os.path.isfile(lib + ".fr"):
                     self.args.append(lib + ".cpp")
                     compile(lib+".fr", [], True)
-                self.need_to_include_user.append(lib)
+                self.need_to_include_user.append(lib.split('/')[-1])
 
         # SetKeyword
         if self.node().value == "set":
@@ -198,6 +200,8 @@ class Program(object):
                 self.incPosN()
             if(setD == "USE_ARGS"):
                 self.use_args = True
+            elif(setD == "AS_LIB"):
+                self.lib = True
             else:
                 self.uses.append(setD)
 
@@ -330,6 +334,7 @@ class Program(object):
         INCLUDED = []
 
         build_name = self.name + ".cpp"
+        real_name = self.name.split('/')[-1]
 
         with open(build_name, "w") as output:
 
@@ -384,18 +389,22 @@ class Program(object):
 
                 else:
 
+                    output.write('#include "'+ real_name +'.h"\n')
+
                     for _i, node in enumerate(self.nodes):
                         output.write(node.gen_code())
                     output.write("\n")
 
         if self.lib:
             with open((self.name + ".h"), "w")as output:
-                output.write("#ifndef _FR_LIB_"+ self.name.upper() +"_\n")
-                output.write("#define _FR_LIB_"+ self.name.upper() +"_\n")
+                output.write("#ifndef _FR_LIB_"+ self.name.upper().replace('/', '_') +"_\n")
+                output.write("#define _FR_LIB_"+ self.name.upper().replace('/', '_') +"_\n")
 
                 # defines goes here
                 for _i, useD in enumerate(self.uses):
                     output.write("#define "+ useD +"\n")
+
+                INCLUDED = []
 
                 # includes goes here
                 for _i, inc in enumerate(self.need_to_include):
@@ -406,6 +415,8 @@ class Program(object):
                         output.write("#include \""+ inc +".h\"\n")
                 for _i, node in enumerate(self.nodes):
                     node.check_include()
+                    if node.node == "FuncDefine":
+                        node.gen_code()
                     if node.libs != []:
                         for lib in node.libs:
                             if lib not in INCLUDED:
@@ -415,6 +426,7 @@ class Program(object):
                          output.write("#include<vector>\n")
                          INCLUDED.append("vector")
 
+                # output.write('#include "'+ real_name +'.cpp"\n')
                 output.write("\n")
 
                 for _i, node in enumerate(self.nodes):
@@ -427,9 +439,16 @@ class Program(object):
         for arg in self.args:
             newArgs = newArgs + arg + " "
 
+        allFiles = " "
+        for lib in self.need_to_include_user:
+            allFiles = allFiles + lib + ".cpp "
+
         os.system("type " + self.name + ".cpp")
         os.system("clang-format -i " + self.name + ".cpp")
-        os.system("g++ -std=c++11 " + self.name + ".cpp " + newArgs + " -o " + self.name)
+        if self.lib:
+            os.system("clang-format -i " + self.name + ".h")
+        if not self.lib:
+            os.system("g++ -std=c++11 " + self.name + ".cpp " + newArgs + " -o " + self.name)
 
     def init(self):
         while self.pos < len(self.source):
@@ -439,7 +458,7 @@ class Program(object):
                 # print(token)
             self.incPos()
 
-        #   print()
+        print()
         curly = 0
         addSemi = False
         while self.posN < len(self.tokens):
@@ -465,12 +484,13 @@ class Program(object):
                             addSemi = False
             self.incPosN()
 
-        print()
+        # print()
 
         self.compile_to_cpp()
 
 
 def compile(source_file, args, lib=False):
     name = os.path.splitext(source_file)[0]
+    path_to = ""
     with open(source_file, 'r') as source_file:
-        return Program(source_file.read(), name, args, lib)
+        return Program(source_file.read(), name, args, lib, path_to)

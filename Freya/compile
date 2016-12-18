@@ -9,6 +9,7 @@ fi
 
 $PYTHON ../src/main.py src/freya.fr
 mkdir -p build
+rm -rf build/*
 mv src/*.cpp build
 mv src/*.h build
 mv src/freya build/freya

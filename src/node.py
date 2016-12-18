@@ -308,10 +308,16 @@ class FuncDefine(object):
                 self.include_libs(arr[1])
                 arr[1] = self.vector_check(arr[1])
                 arr[1] = self.prime(arr[1])
-                self.codegen += "{type} {name}".format(
-                    type=arr[1],
-                    name=arr[0]
-                )
+                if not lib:
+                    self.codegen += "{type} {name}".format(
+                        type=arr[1],
+                        name=arr[0]
+                    )
+                else:
+                    self.codegen += "{type}".format(
+                        type=arr[1],
+                        name=arr[0]
+                    )
             pos += 1
             if pos != self.args.__len__():
                 self.codegen += ", "
@@ -411,7 +417,7 @@ class ForStmt(object):
         pass
 
     def gen_code(self):
-        
+
         vartype = "int"
         varname = var = self.var
         varstart = self.args[1]
@@ -421,7 +427,7 @@ class ForStmt(object):
         else:
             comparator = ">"
         increment_by = "1"
-        
+
         if len(self.args) >= 4:
             if self.args[3].isdigit():
                 vartype = "int"
@@ -431,7 +437,7 @@ class ForStmt(object):
                 increment_by = self.args[3]
             else:
                 comparator = self.args[3]
-        
+
         if len(self.args) == 5:
             if self.args[4].isdigit():
                 vartype = "int"
@@ -441,7 +447,7 @@ class ForStmt(object):
                 increment_by = self.args[4]
             else:
                 comparator = self.args[4]
-        
+
         self.codegen = "for ({type} {var} = {start}; {var} {compare} {end}; {var} += {increment}) ".format(
             type = vartype,
             var = self.var,
@@ -450,7 +456,7 @@ class ForStmt(object):
             end = varend,
             increment = increment_by
         )
-        
+
         self.codegen += "{\n"
         return self.codegen
 
@@ -482,7 +488,7 @@ class StructStmt(object):
         return self.codegen
 
 class WhileStmt(object):
-    
+
         def __init__(self, args):
             self.node = "ForStmt"
             self.args = args
@@ -507,4 +513,3 @@ class WhileStmt(object):
             )
             self.codegen += "{\n"
             return self.codegen
-
